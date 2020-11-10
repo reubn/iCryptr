@@ -213,6 +213,8 @@ func unpackEncryptedFile( _ encryptedData: Data) -> (salt: Data, iv: Data, filen
     // requested via another param and switch statement?
     // helper constant
     
+    if(encryptedData.count < saltSize + kCCBlockSizeAES128 + 2 + 2 + 1) {return nil}
+    
     let salt = encryptedData.subdata(in: 0..<saltSize)
     let ivEnd = saltSize + kCCBlockSizeAES128
     let iv = encryptedData.subdata(in: saltSize..<ivEnd)
@@ -282,7 +284,7 @@ func decryptFile(_ fileURL: URL, _ passwd: String) -> (Data, String)? {
                                      (decryptedFileName as NSString).deletingPathExtension,
                                      (decryptedFileName as NSString).pathExtension, decryptedData)
         */
-        print(String(decoding: unpackedFile.thumb, as: UTF8.self))
+//        print(String(decoding: unpackedFile.thumb, as: UTF8.self))
         return (decryptedData, decryptedFileName)
     } catch {
         return nil

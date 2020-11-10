@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1B15F56C2545BB6B00B96B9A /* ImageScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 1B15F56B2545BB6B00B96B9A /* ImageScrollView */; };
+		1B65CF6E255B3F3C005BA48A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B65CF6D255B3F3C005BA48A /* main.swift */; };
+		1B65CF75255B3F57005BA48A /* EncryptionServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF4F45325481AB5004FDE3C /* EncryptionServices.swift */; };
 		1B8578CB254824E6006183DA /* BlurHashEncode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF4F31025474CBB004FDE3C /* BlurHashEncode.swift */; };
 		1B9A43252549E72900CFDABC /* DocumentViewerCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9A43242549E72900CFDABC /* DocumentViewerCommon.swift */; };
 		1BF4F31125474CBB004FDE3C /* BlurHashEncode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF4F31025474CBB004FDE3C /* BlurHashEncode.swift */; };
@@ -44,6 +46,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1B65CF69255B3F3C005BA48A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		1BF4F32F25475BBA004FDE3C /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,6 +69,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B65CF6B255B3F3C005BA48A /* iCryptrCLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iCryptrCLI; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B65CF6D255B3F3C005BA48A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1B9A43242549E72900CFDABC /* DocumentViewerCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DocumentViewerCommon.swift; path = ../../Common/DocumentViewerCommon.swift; sourceTree = "<group>"; };
 		1BF4F31025474CBB004FDE3C /* BlurHashEncode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlurHashEncode.swift; path = ../iCryptr/Services/BlurHashEncode.swift; sourceTree = "<group>"; };
 		1BF4F32325475BBA004FDE3C /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
@@ -83,6 +96,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1B65CF68255B3F3C005BA48A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BF4F33B25475BED004FDE3C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -102,6 +122,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B65CF6C255B3F3C005BA48A /* iCryptrCLI */ = {
+			isa = PBXGroup;
+			children = (
+				1B65CF6D255B3F3C005BA48A /* main.swift */,
+			);
+			path = iCryptrCLI;
+			sourceTree = "<group>";
+		};
 		1BF4F32225475BBA004FDE3C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,8 +200,10 @@
 				C6B937F52027AB65006F6A8A /* iCryptr */,
 				C64BB2F9202D4F2E00F704F8 /* iCryptr.app */,
 				1BF4F34025475BED004FDE3C /* iCryptrThumbnail */,
+				1B65CF6C255B3F3C005BA48A /* iCryptrCLI */,
 				1BF4F32225475BBA004FDE3C /* Frameworks */,
 				1BF4F33E25475BED004FDE3C /* iCryptrThumbnail.appex */,
+				1B65CF6B255B3F3C005BA48A /* iCryptrCLI */,
 			);
 			sourceTree = "<group>";
 		};
@@ -190,6 +220,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1B65CF6A255B3F3C005BA48A /* iCryptrCLI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B65CF71255B3F3C005BA48A /* Build configuration list for PBXNativeTarget "iCryptrCLI" */;
+			buildPhases = (
+				1B65CF67255B3F3C005BA48A /* Sources */,
+				1B65CF68255B3F3C005BA48A /* Frameworks */,
+				1B65CF69255B3F3C005BA48A /* CopyFiles */,
+				1B65CF7C255B41A8005BA48A /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iCryptrCLI;
+			productName = iCryptrCLI;
+			productReference = 1B65CF6B255B3F3C005BA48A /* iCryptrCLI */;
+			productType = "com.apple.product-type.tool";
+		};
 		1BF4F33D25475BED004FDE3C /* iCryptrThumbnail */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BF4F34725475BED004FDE3C /* Build configuration list for PBXNativeTarget "iCryptrThumbnail" */;
@@ -239,13 +287,15 @@
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Reuben;
 				TargetAttributes = {
+					1B65CF6A255B3F3C005BA48A = {
+						CreatedOnToolsVersion = 12.0;
+					};
 					1BF4F33D25475BED004FDE3C = {
 						CreatedOnToolsVersion = 12.0;
 					};
 					C6B937F22027AB65006F6A8A = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1200;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -267,6 +317,7 @@
 			targets = (
 				C6B937F22027AB65006F6A8A /* iCryptr */,
 				1BF4F33D25475BED004FDE3C /* iCryptrThumbnail */,
+				1B65CF6A255B3F3C005BA48A /* iCryptrCLI */,
 			);
 		};
 /* End PBXProject section */
@@ -291,7 +342,36 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1B65CF7C255B41A8005BA48A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/zsh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${BUILT_PRODUCTS_DIR}/iCryptrCLI ${PROJECT_DIR}/iCryptrCLI\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		1B65CF67255B3F3C005BA48A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B65CF75255B3F57005BA48A /* EncryptionServices.swift in Sources */,
+				1B65CF6E255B3F3C005BA48A /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BF4F33A25475BED004FDE3C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -354,10 +434,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1B65CF6F255B3F3C005BA48A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FRMMHNBMBZ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		1B65CF70255B3F3C005BA48A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FRMMHNBMBZ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		1BF4F34825475BED004FDE3C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				INFOPLIST_FILE = iCryptrThumbnail/Info.plist;
@@ -371,6 +485,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr.iCryptrThumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -382,6 +497,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				INFOPLIST_FILE = iCryptrThumbnail/Info.plist;
@@ -394,6 +510,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr.iCryptrThumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -527,6 +644,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				INFOPLIST_FILE = "$(SRCROOT)/iCryptr/Resources/Info.plist";
@@ -536,6 +654,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -550,6 +669,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				INFOPLIST_FILE = "$(SRCROOT)/iCryptr/Resources/Info.plist";
@@ -559,6 +679,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -569,6 +690,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1B65CF71255B3F3C005BA48A /* Build configuration list for PBXNativeTarget "iCryptrCLI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B65CF6F255B3F3C005BA48A /* Debug */,
+				1B65CF70255B3F3C005BA48A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1BF4F34725475BED004FDE3C /* Build configuration list for PBXNativeTarget "iCryptrThumbnail" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
