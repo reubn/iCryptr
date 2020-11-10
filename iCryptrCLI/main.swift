@@ -20,9 +20,9 @@ let paths = Array(arguments[1...])
 if(paths.count == 0) {print("can't decrypt thin air mate", to: &stderr); exit(1)}
 
 func decrypt(_ url: URL){
-    let (fileData, fileName) = decryptFile(url, key) ?? (nil, nil)
     
-    if(fileData == nil) {print("decryption failure", url); return}
+    let (fileData, fileName) = decryptFile(url, key) ?? (nil, nil)
+    if((fileName ?? "").isEmpty) {print("decryption failure", url); return}
     
     let outURL = url.deletingLastPathComponent().appendingPathComponent(fileName!)
     
