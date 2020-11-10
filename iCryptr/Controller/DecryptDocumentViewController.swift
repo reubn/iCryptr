@@ -24,11 +24,8 @@ class DecryptDocumentViewController: UIViewController {
         
         if(self.decryptedData == nil) {
             self.imageScrollView.setup()
-            self.resultImageScrollView.setup()
+//            self.resultImageScrollView.setup()
             
-            if let viewWithTag = self.view.viewWithTag(100) {
-                viewWithTag.removeFromSuperview()
-            }
             
             self.navigationBar.topItem!.title = self.document?.fileURL.lastPathComponent
             self.shareButton.isEnabled = false
@@ -52,6 +49,7 @@ class DecryptDocumentViewController: UIViewController {
         if isBeingDismissed && (self.tempFileURL != nil) {
             do {
                 try FileManager.default.removeItem(at: self.tempFileURL!)
+                self.tempFileURL = nil
                 print("removed files")
             } catch {
                 print("failed to remove temporary url with error: \(error)")
@@ -73,8 +71,9 @@ class DecryptDocumentViewController: UIViewController {
         self.isAppInBackground = true
         if(self.decryptedData != nil) {
             self.decryptedData = nil
-            self.viewWillAppear(false)
             if((self.presentedViewController) != nil) {self.presentedViewController!.dismiss(animated: false) {}}
+            
+            self.dismissDocumentViewController()
         }
     }
     
@@ -196,9 +195,7 @@ class DecryptDocumentViewController: UIViewController {
                         return completion(false)
                     }
 
-                    if let image = UIImage(data: fileData!){
-                        self.resultImageScrollView.display(image: image)
-                    } else {
+                    
                         let avAsset = AVURLAsset(url: self.tempFileURL!)
 
                         if(avAsset.isPlayable) {
@@ -217,16 +214,16 @@ class DecryptDocumentViewController: UIViewController {
                             quickLookViewController.dataSource = instance
                             quickLookViewController.currentPreviewItemIndex = 0
                             
-                            quickLookViewController.view.bounds = self.resultImageScrollView.bounds
-                            quickLookViewController.view.frame = self.resultImageScrollView.frame
-                            quickLookViewController.view.tag = 100
+                            quickLookViewController.view.bounds = self.scrollView.bounds
+                            quickLookViewController.view.frame = self.scrollView.frame
                             
                             self.addChild(quickLookViewController)
-                            self.view.insertSubview(quickLookViewController.view, at: 1)
+                            self.scrollView.contentInset = UIEdgeInsets(top: 28 + 16 + 6, left: 0, bottom: 0, right: 0)
+                            self.scrollView.insertSubview(quickLookViewController.view, at: 1)
                             
                             quickLookViewController.reloadData()
                         }
-                    }
+                    
                     
                     UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut){
                         self.imageScrollView.alpha = 0
@@ -248,6 +245,7 @@ class DecryptDocumentViewController: UIViewController {
     
     // MARK IBOutlets
     @IBOutlet weak var imageScrollView: ImageScrollView!
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var resultImageScrollView: ImageScrollView!
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var shareButton: UIBarButtonItem!

@@ -31,12 +31,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tWo-I2-DPz" customClass="ImageScrollView" customModule="ImageScrollView">
-                                <rect key="frame" x="0.0" y="44" width="414" height="692"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                <viewLayoutGuide key="contentLayoutGuide" id="GMn-eL-dXw"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="QqH-ET-Ghh"/>
+                            <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ah5-gu-6Kp">
+                                <rect key="frame" x="0.0" y="-16" width="414" height="753"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="yRD-mo-6nn"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="sXv-e6-Sdm"/>
                             </scrollView>
                             <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xOi-i0-Yxs">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -75,10 +74,10 @@
                     <navigationItem key="navigationItem" id="QMV-4O-0Wf"/>
                     <connections>
                         <outlet property="activityIndicator" destination="BgH-rh-bSw" id="SxR-hK-zsi"/>
-                        <outlet property="imageScrollView" destination="tWo-I2-DPz" id="84A-ZI-B1Y"/>
                         <outlet property="lockButton" destination="KK1-lx-FPl" id="R9p-dL-tG5"/>
                         <outlet property="lockWithPasswordButton" destination="wdN-Vn-Cud" id="mh6-D1-ftJ"/>
                         <outlet property="navigationBar" destination="xOi-i0-Yxs" id="3dv-wi-hlp"/>
+                        <outlet property="scrollView" destination="ah5-gu-6Kp" id="2WG-Zz-oVF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rl9-ES-qQn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -154,12 +153,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbP-WZ-slN" customClass="ImageScrollView" customModule="ImageScrollView">
-                                <rect key="frame" x="0.0" y="44" width="414" height="692"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                <viewLayoutGuide key="contentLayoutGuide" id="jLZ-GS-MWF"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="fzZ-KG-Fkm"/>
+                            <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" id="M4N-Xw-iMv">
+                                <rect key="frame" x="0.0" y="-16" width="414" height="752"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <viewLayoutGuide key="safeArea" id="cLp-Kb-O92"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Xlw-Cc-nrO"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="yh7-c0-K8Z"/>
                             </scrollView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8vi-0b-jKl" customClass="ImageScrollView" customModule="ImageScrollView">
                                 <rect key="frame" x="0.0" y="44" width="414" height="692"/>
@@ -202,7 +201,7 @@
                         <outlet property="activityIndicator" destination="ewS-az-25c" id="LE0-Vd-4Tt"/>
                         <outlet property="imageScrollView" destination="8vi-0b-jKl" id="l6k-VD-UZe"/>
                         <outlet property="navigationBar" destination="Byd-46-zg7" id="uwW-a6-7yn"/>
-                        <outlet property="resultImageScrollView" destination="fbP-WZ-slN" id="KgD-mQ-Pma"/>
+                        <outlet property="scrollView" destination="M4N-Xw-iMv" id="bVX-Wu-maV"/>
                         <outlet property="shareButton" destination="Vbu-cc-mkT" id="yL7-Ww-A4J"/>
                         <outlet property="unlockButton" destination="HeI-XF-wId" id="fET-HL-reb"/>
                     </connections>

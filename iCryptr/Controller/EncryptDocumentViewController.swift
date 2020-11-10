@@ -14,8 +14,6 @@ import AVKit
 
 import QuickLook
 
-import ImageScrollView
-
 class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -49,11 +47,12 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
             quickLookViewController.dataSource = instance
             quickLookViewController.currentPreviewItemIndex = 0
             
-            quickLookViewController.view.bounds = self.imageScrollView.bounds
-            quickLookViewController.view.frame = self.imageScrollView.frame
+            quickLookViewController.view.bounds = self.scrollView.bounds
+            quickLookViewController.view.frame = self.scrollView.frame
             
             self.addChild(quickLookViewController)
-            self.view.insertSubview(quickLookViewController.view, at: 1)
+            self.scrollView.contentInset = UIEdgeInsets(top: 28 + 16 + 6, left: 0, bottom: 0, right: 0)
+            self.scrollView.insertSubview(quickLookViewController.view, at: 1)
             
             quickLookViewController.reloadData()
         }
@@ -174,7 +173,7 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
     }
     
     // MARK: IB Outlets
-    @IBOutlet weak var imageScrollView: ImageScrollView!
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var navigationBar: UINavigationBar!
     
     @IBOutlet weak var lockButton: UIBarButtonItem!
