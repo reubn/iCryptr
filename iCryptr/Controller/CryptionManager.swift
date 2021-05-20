@@ -1,11 +1,3 @@
-//
-//  EncryptionManager.swift
-//  iCryptr
-//
-//  Created by Reuben Eggar on 18/05/2021.
-//  Copyright © 2021 Reuben. All rights reserved.
-//
-
 import Foundation
 import UIKit
 import Promises
@@ -14,29 +6,29 @@ import Promises
 class CryptionManager {
   func crypt(towards: CryptionState, documents: [Document], with passwordMethod: PasswordMethod, notifier: @escaping (Update) -> Void){
     switch towards {
-      case .encrypted: return encrypt(documents: documents, with: passwordMethod, notifier: notifier)
-      case .decrypted: return decrypt(documents: documents, with: passwordMethod, notifier: notifier)
+    case .encrypted: return encrypt(documents: documents, with: passwordMethod, notifier: notifier)
+    case .decrypted: return decrypt(documents: documents, with: passwordMethod, notifier: notifier)
     }
   }
   
   func encrypt(documents: [Document], with passwordMethod: PasswordMethod, notifier: @escaping (Update) -> Void){
     switch passwordMethod {
-      case .default:
-        verifyIdentity(ReasonForAuthenticating: "Use Default Password to Encrypt") {authenticated in
-            if(authenticated) {
-              guard let password = getPasswordFromKeychain(forAccount: ".password") else {
-                notifier(.authenticationFailed)
-                
-                return
-              }
-              
-              notifier(.authenticationSuccessful)
-              
-              self.encrypt(documents: documents, password: password, notifier: notifier)
-            } else {
-              notifier(.authenticationFailed)
-            }
+    case .default:
+      verifyIdentity(ReasonForAuthenticating: "Use Default Password to Encrypt") {authenticated in
+        if(authenticated) {
+          guard let password = getPasswordFromKeychain(forAccount: ".password") else {
+            notifier(.authenticationFailed)
+            
+            return
+          }
+          
+          notifier(.authenticationSuccessful)
+          
+          self.encrypt(documents: documents, password: password, notifier: notifier)
+        } else {
+          notifier(.authenticationFailed)
         }
+      }
     case .specific(let password):
       notifier(.authenticationSuccessful)
       
@@ -59,7 +51,7 @@ class CryptionManager {
       do {
         try FileManager.default.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
       } catch {
-          print("temp dir cr failed")
+        print("temp dir cr failed")
       }
       
       all(promises).then({encryptedResults in
@@ -78,22 +70,22 @@ class CryptionManager {
   
   func decrypt(documents: [Document], with passwordMethod: PasswordMethod, notifier: @escaping (Update) -> Void){
     switch passwordMethod {
-      case .default:
-        verifyIdentity(ReasonForAuthenticating: "Use Default Password to Decrypt") {authenticated in
-            if(authenticated) {
-              guard let password = getPasswordFromKeychain(forAccount: ".password") else {
-                notifier(.authenticationFailed)
-                
-                return
-              }
-              
-              notifier(.authenticationSuccessful)
-              
-              self.decrypt(documents: documents, password: password, notifier: notifier)
-            } else {
-              notifier(.authenticationFailed)
-            }
+    case .default:
+      verifyIdentity(ReasonForAuthenticating: "Use Default Password to Decrypt") {authenticated in
+        if(authenticated) {
+          guard let password = getPasswordFromKeychain(forAccount: ".password") else {
+            notifier(.authenticationFailed)
+            
+            return
+          }
+          
+          notifier(.authenticationSuccessful)
+          
+          self.decrypt(documents: documents, password: password, notifier: notifier)
+        } else {
+          notifier(.authenticationFailed)
         }
+      }
     case .specific(let password):
       notifier(.authenticationSuccessful)
       
@@ -114,7 +106,7 @@ class CryptionManager {
       do {
         try FileManager.default.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
       } catch {
-          print("temp dir cr failed")
+        print("temp dir cr failed")
       }
       
       let tempFileURLs = decryptedResults.map({result -> URL in
@@ -189,8 +181,8 @@ class CryptionManager {
     
     var to: Self {
       switch self {
-        case .encrypted: return .decrypted
-        case .decrypted: return .encrypted
+      case .encrypted: return .decrypted
+      case .decrypted: return .encrypted
       }
     }
     
