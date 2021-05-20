@@ -1,11 +1,3 @@
-//
-//  DocumentViewerCommon.swift
-//  iCryptr
-//
-//  Created by Reuben Eggar on 28/10/2020.
-//  Copyright © 2020 Reuben. All rights reserved.
-//
-
 import Foundation
 
 import QuickLook
