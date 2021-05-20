@@ -10,13 +10,12 @@ import UIKit
 import MobileCoreServices
 
 
-class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate {
-    
+class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate, UIDocumentPickerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
         allowsDocumentCreation = false
-        allowsPickingMultipleItems = false
+        allowsPickingMultipleItems = true
         shouldShowFileExtensions = true
         
         // Update the style of the UIDocumentBrowserViewController
@@ -42,27 +41,54 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     }
     
     func documentBrowser(_ controller: UIDocumentBrowserViewController, didPickDocumentURLs documentURLs: [URL]) {
-        guard let sourceURL = documentURLs.first else { return }
-        presentDocument(at: sourceURL)
+      if(documentURLs.count == 1){
+        let document = Document(fileURL: documentURLs.first!)
+        
+        presentDocument(document)
+      } else {
+        let documents = documentURLs.map({Document(fileURL: $0)})
+        let cryptionStates = documents.map({CryptionManager.CryptionState(document: $0)})
+        
+        let currentCryptionState = cryptionStates.first!
+        let homogenous = cryptionStates.allSatisfy({$0 == currentCryptionState})
+        
+        if(!homogenous) {
+          print("documents must be of same encryption state")
+          return
+        }
+        
+        CryptionManager.shared.crypt(towards: currentCryptionState.to, documents: documents, with: .default){message in
+          DispatchQueue.main.async {
+            switch message {
+              case .encryptionComplete(let tempURLs), .decryptionComplete(let tempURLs):
+                let documentSaveController = UIDocumentPickerViewController(forExporting: tempURLs, asCopy: true)
+                documentSaveController.delegate = self
+                documentSaveController.popoverPresentationController?.sourceView = self.view
+                
+                self.present(documentSaveController, animated: true, completion: nil)
+              default: ()
+            }
+          }
+        }
+      }
+        
     }
     
     func documentBrowser(_ controller: UIDocumentBrowserViewController, didImportDocumentAt sourceURL: URL, toDestinationURL destinationURL: URL) {
         // Present the Document View Controller for the new newly created document
-        presentDocument(at: destinationURL)
+        let document = Document(fileURL: destinationURL)
+        presentDocument(document)
     }
     
     func documentBrowser(_ controller: UIDocumentBrowserViewController, failedToImportDocumentAt documentURL: URL, error: Error?) {
         // Make sure to handle the failed import appropriately, e.g., by presenting an error message to the user.
     }
-    
-    
+
     // MARK: View Presentation
-    func presentDocument(at documentURL: URL) {
+  func presentDocument(_ document: Document) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
-        let document = Document(fileURL: documentURL)
-        
-        if(document.savingFileType == "com.reuben.icryptr.encryptedfile") {
+        if(CryptionManager.CryptionState(document: document) == .encrypted) {
             let documentViewController = storyBoard.instantiateViewController(withIdentifier: "DecryptViewController") as! DecryptDocumentViewController
             documentViewController.document = document
             present(documentViewController, animated: true, completion: nil)
@@ -80,4 +106,3 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
         
     }
 }
-

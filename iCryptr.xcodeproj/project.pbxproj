@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B01D3FF26542E5A003C802C /* CryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B01D3FE26542E5A003C802C /* CryptionManager.swift */; };
+		1B01D4022654349B003C802C /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 1B01D4012654349B003C802C /* Promises */; };
 		1B15F56C2545BB6B00B96B9A /* ImageScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 1B15F56B2545BB6B00B96B9A /* ImageScrollView */; };
 		1B65CF6E255B3F3C005BA48A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B65CF6D255B3F3C005BA48A /* main.swift */; };
 		1B65CF75255B3F57005BA48A /* EncryptionServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF4F45325481AB5004FDE3C /* EncryptionServices.swift */; };
@@ -69,8 +71,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B01D3FE26542E5A003C802C /* CryptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptionManager.swift; sourceTree = "<group>"; };
 		1B65CF6B255B3F3C005BA48A /* iCryptrCLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iCryptrCLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B65CF6D255B3F3C005BA48A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		1B65CF9E255C3516005BA48A /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
 		1B9A43242549E72900CFDABC /* DocumentViewerCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DocumentViewerCommon.swift; path = ../../Common/DocumentViewerCommon.swift; sourceTree = "<group>"; };
 		1BF4F31025474CBB004FDE3C /* BlurHashEncode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlurHashEncode.swift; path = ../iCryptr/Services/BlurHashEncode.swift; sourceTree = "<group>"; };
 		1BF4F32325475BBA004FDE3C /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
@@ -115,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B01D4022654349B003C802C /* Promises in Frameworks */,
 				1B15F56C2545BB6B00B96B9A /* ImageScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				1BF4F32325475BBA004FDE3C /* QuickLookThumbnailing.framework */,
+				1B65CF9E255C3516005BA48A /* Quartz.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -168,6 +174,7 @@
 				C6B937FC2027AB65006F6A8A /* Document.swift */,
 				C689ABBC20551A5C00C4AC66 /* SettingsViewController.swift */,
 				C6B937FA2027AB65006F6A8A /* EncryptDocumentViewController.swift */,
+				1B01D3FE26542E5A003C802C /* CryptionManager.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -272,6 +279,7 @@
 			name = iCryptr;
 			packageProductDependencies = (
 				1B15F56B2545BB6B00B96B9A /* ImageScrollView */,
+				1B01D4012654349B003C802C /* Promises */,
 			);
 			productName = iCryptr;
 			productReference = C64BB2F9202D4F2E00F704F8 /* iCryptr.app */;
@@ -310,6 +318,7 @@
 			mainGroup = C6B937EA2027AB65006F6A8A;
 			packageReferences = (
 				1B15F56A2545BB6B00B96B9A /* XCRemoteSwiftPackageReference "ImageScrollView" */,
+				1B01D4002654349B003C802C /* XCRemoteSwiftPackageReference "promises" */,
 			);
 			productRefGroup = C6B937EA2027AB65006F6A8A;
 			projectDirPath = "";
@@ -390,6 +399,7 @@
 			files = (
 				1B9A43252549E72900CFDABC /* DocumentViewerCommon.swift in Sources */,
 				1BF4F31125474CBB004FDE3C /* BlurHashEncode.swift in Sources */,
+				1B01D3FF26542E5A003C802C /* CryptionManager.swift in Sources */,
 				C6F94D81205625970012E44D /* KeychainServices.swift in Sources */,
 				C6B937FD2027AB65006F6A8A /* Document.swift in Sources */,
 				1BF4F45725481AB5004FDE3C /* EncryptionServices.swift in Sources */,
@@ -438,12 +448,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr.iCryptrCLI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
@@ -455,11 +467,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FRMMHNBMBZ;
 				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reuben.iCryptr.iCryptrCLI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "Common/iCryptr-Bridging-Header.h";
@@ -729,6 +743,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1B01D4002654349B003C802C /* XCRemoteSwiftPackageReference "promises" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/promises.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		1B15F56A2545BB6B00B96B9A /* XCRemoteSwiftPackageReference "ImageScrollView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/huynguyencong/ImageScrollView.git";
@@ -740,6 +762,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1B01D4012654349B003C802C /* Promises */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1B01D4002654349B003C802C /* XCRemoteSwiftPackageReference "promises" */;
+			productName = Promises;
+		};
 		1B15F56B2545BB6B00B96B9A /* ImageScrollView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1B15F56A2545BB6B00B96B9A /* XCRemoteSwiftPackageReference "ImageScrollView" */;

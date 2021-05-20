@@ -56,7 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             // Present the Document View Controller for the revealed URL
-            documentBrowserViewController.presentDocument(at: revealedDocumentURL!)
+            let document = Document(fileURL: revealedDocumentURL!)
+            documentBrowserViewController.presentDocument(document)
         }
 
         return true
