@@ -39,6 +39,18 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
             importHandler(nil, .none)
         }
     }
+  
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+      print("dp dpda", urls)
+      
+      CryptionManager.shared.clearTemporaryDirectory()
+    }
+  
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+      print("dp dpwc")
+      
+      CryptionManager.shared.clearTemporaryDirectory()
+    }
     
     func documentBrowser(_ controller: UIDocumentBrowserViewController, didPickDocumentURLs documentURLs: [URL]) {
       if(documentURLs.count == 1){

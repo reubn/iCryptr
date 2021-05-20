@@ -54,21 +54,19 @@ class CryptionManager {
         })
       })
       
-      let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-      let temporaryDir = ProcessInfo().globallyUniqueString
-      let tempFileDirURL = temporaryDirectoryURL.appendingPathComponent(temporaryDir)
+      let tempDirectoryURL = self.tempDirectoryURL.appendingPathComponent(ProcessInfo().globallyUniqueString)
       
       do {
-        try FileManager.default.createDirectory(at: tempFileDirURL, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
       } catch {
           print("temp dir cr failed")
       }
       
       all(promises).then({encryptedResults in
         return encryptedResults.map({result -> URL in
-          let tempFileURL = tempFileDirURL.appendingPathComponent(result.fileName)
+          let tempFileURL = tempDirectoryURL.appendingPathComponent(result.fileName)
           
-          try! result.fileData.write(to: tempFileURL, options: .atomic)
+          try! result.fileData.write(to: tempFileURL, options: [.atomic, .completeFileProtection])
           
           return tempFileURL
         })
@@ -111,26 +109,23 @@ class CryptionManager {
         return CryptionResult(fileName: fileName, fileData: fileData)
       })
       
-      let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-      let temporaryDir = ProcessInfo().globallyUniqueString
-      let tempFileDirURL = temporaryDirectoryURL.appendingPathComponent(temporaryDir)
+      let tempDirectoryURL = self.tempDirectoryURL.appendingPathComponent(ProcessInfo().globallyUniqueString)
       
       do {
-        try FileManager.default.createDirectory(at: tempFileDirURL, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
       } catch {
           print("temp dir cr failed")
       }
       
       let tempFileURLs = decryptedResults.map({result -> URL in
-        let tempFileURL = tempFileDirURL.appendingPathComponent(result.fileName)
+        let tempFileURL = tempDirectoryURL.appendingPathComponent(result.fileName)
         
-        try! result.fileData.write(to: tempFileURL, options: .atomic)
+        try! result.fileData.write(to: tempFileURL, options: [.atomic, .completeFileProtection])
         
         return tempFileURL
       })
       
       notifier(.decryptionComplete(tempFileURLs))
-
     }
   }
   
@@ -139,6 +134,25 @@ class CryptionManager {
       createThumbnail(url, completion: {string, colour in
         fulfill(ThumbnailResult(string: string, colour: colour))
       })
+    }
+  }
+  
+  func clearTemporaryDirectory(){
+    do {
+      let contents = try? FileManager.default.contentsOfDirectory(at: tempDirectoryURL, includingPropertiesForKeys: nil)
+      
+      if(contents == nil) {
+        print("Temporary Directory Doesn't Exist")
+        return
+      }
+      
+      for url in contents! {
+        try FileManager.default.removeItem(at: url)
+      }
+      
+      print("Temporary Directory Cleared")
+    } catch {
+      fatalError("Failed to Clear Temp Directory")
     }
   }
   
@@ -184,6 +198,11 @@ class CryptionManager {
       to
     }
   }
+  
+  static let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    .appendingPathComponent(ProcessInfo().globallyUniqueString, isDirectory: true)
+  
+  let tempDirectoryURL = CryptionManager.tempDirectoryURL
   
   static let shared = CryptionManager()
 }
