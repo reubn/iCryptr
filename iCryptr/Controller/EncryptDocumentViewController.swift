@@ -55,15 +55,7 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     
-    if (self.tempFileURL != nil) {
-      do {
-        try FileManager.default.removeItem(at: self.tempFileURL!)
-        print("removed files")
-      } catch {
-        print("failed to remove temporary url with error: \(error)")
-      }
-    }
-    
+    CryptionManager.shared.clearTemporaryDirectory()
   }
   
   @IBAction func dismissDocumentViewController() {
@@ -73,13 +65,13 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
   }
   
   // MARK IB Actions for encryption
-  @IBAction func encryptWithSpecificPasswordFlow() {
+  @IBAction func encryptWithSpecificPassword() {
     // Set up alert controler to get password and new filename
     let alert = UIAlertController(title: "Enter Password", message: "", preferredStyle: .alert)
     // encrypt file on save
     let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
       guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
-      self.encryptCommonFlow(password){_ in}
+      self.encrypt(with: .specific(password))
     }
     // set up cancel action
     let alertCancelAction = UIAlertAction(title: "Cancel", style: .default)
@@ -101,62 +93,32 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
     present(alert, animated: true)
   }
   
-  @IBAction func encryptWithDefaultPasswordFlow() {
-    verifyIdentity(ReasonForAuthenticating: "Authorize use of default password") {authenticated in
-      if(authenticated) {
-        guard let password = getPasswordFromKeychain(forAccount: ".password") else { return }
-        self.encryptCommonFlow(password){_ in}
-      } else {
-        self.activityIndicator.stopAnimating()
+  func encrypt(with: CryptionManager.PasswordMethod) {
+    CryptionManager.shared.crypt(towards: .encrypted, documents: [self.document!], with: with){message in
+      DispatchQueue.main.async {
+        switch message {
+          case .authenticationFailed:
+            self.activityIndicator.stopAnimating()
+            
+          case .authenticationSuccessful:
+            self.activityIndicator.startAnimating()
+            
+          case .encryptionComplete(let tempURLs):
+            self.activityIndicator.stopAnimating()
+            
+            let documentSaveController = UIDocumentPickerViewController(forExporting: tempURLs, asCopy: true)
+            documentSaveController.delegate = self
+            documentSaveController.popoverPresentationController?.sourceView = self.view
+            
+            self.present(documentSaveController, animated: true, completion: nil)
+          case .decryptionComplete: ()
+        }
       }
     }
   }
   
-  // MARK: Class Methods
-  func encryptCommonFlow(_ passwd: String, completion: @escaping (Bool) -> Void) -> Void  {
-    self.activityIndicator.startAnimating()
-    
-    guard let fileURL = self.document?.fileURL else { return }
-    
-    DispatchQueue.global(qos: .background).async {
-      let result = encryptFile(fileURL, passwd, self.document!.fileURL.lastPathComponent, self.thumbnailString!)
-      
-      let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-      let temporaryDir = ProcessInfo().globallyUniqueString
-      
-      let tempFileDirURL = temporaryDirectoryURL.appendingPathComponent(temporaryDir)
-      self.tempFileURL = tempFileDirURL.appendingPathComponent(result!.fileName)
-      
-      do {
-        try FileManager.default.createDirectory(at: tempFileDirURL, withIntermediateDirectories: true, attributes: nil)
-      } catch {
-        print("temp dir cr failed")
-        return completion(false)
-      }
-      
-      print(self.tempFileURL!)
-      
-      do {
-        try result!.fileData.write(to: self.tempFileURL!, options: .atomic)
-        print("Written temp file")
-      } catch {
-        print("error")
-        return completion(false)
-      }
-      
-      
-      DispatchQueue.main.async {
-        completion(true)
-        self.activityIndicator.stopAnimating()
-        
-        let documentSaveController = UIDocumentPickerViewController(forExporting: [self.tempFileURL!], asCopy: true)
-        documentSaveController.delegate = self
-        documentSaveController.popoverPresentationController?.sourceView = self.view
-        
-        self.present(documentSaveController, animated: true, completion: nil)
-      }
-      
-    }
+  @IBAction func encryptWithDefaultPassword() {
+    encrypt(with: .default)
   }
   
   func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt: [URL]){
@@ -173,11 +135,8 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
   
   @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
   
-  var tempFileURL: URL? = nil
-  
   var thumbnailString: String? = nil
   
   // MARK: Class Variables
-  var document: UIDocument?
-  
+  var document: Document?
 }
