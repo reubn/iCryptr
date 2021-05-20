@@ -59,7 +59,7 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
       presentDocument(document)
     } else {
       let documents = documentURLs.map({Document(fileURL: $0)})
-      let cryptionStates = documents.map({CryptionManager.CryptionState(document: $0)})
+      let cryptionStates = documents.map({$0.cryptionState})
       
       let currentCryptionState = cryptionStates.first!
       let homogenous = cryptionStates.allSatisfy({$0 == currentCryptionState})
@@ -100,7 +100,7 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
   func presentDocument(_ document: Document) {
     let storyBoard = UIStoryboard(name: "Main", bundle: nil)
     
-    if(CryptionManager.CryptionState(document: document) == .encrypted) {
+    if(document.cryptionState == .encrypted) {
       let documentViewController = storyBoard.instantiateViewController(withIdentifier: "DecryptViewController") as! DecryptDocumentViewController
       documentViewController.document = document
       present(documentViewController, animated: true, completion: nil)
