@@ -11,7 +11,7 @@ class DecryptDocumentViewController: UIViewController {
     self.navigationBar.layer.zPosition = 1
     
     
-    if(!self.fileDecrypted) {
+    if(!self.fileDecrypted && !specificPassword) {
       self.imageScrollView.setup()
       //            self.resultImageScrollView.setup()
       
@@ -73,8 +73,9 @@ class DecryptDocumentViewController: UIViewController {
   }
 
   @IBAction func decryptWithSpecificPassword() {
+    specificPassword = true
     // Set up alert controller to get password
-    let alert = UIAlertController(title: "Enter Password", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: "Enter Decryption Password", message: "", preferredStyle: .alert)
     // decrypt file on save
     let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
       guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
@@ -113,6 +114,7 @@ class DecryptDocumentViewController: UIViewController {
     
     CryptionManager.shared.crypt(towards: .decrypted, documents: [self.document!], with: with){message in
       DispatchQueue.main.async {
+        print(message)
         switch message {
           case .authenticationFailed:
             self.ignoreActiveNotifications = false
@@ -122,9 +124,15 @@ class DecryptDocumentViewController: UIViewController {
             self.ignoreActiveNotifications = false
             self.activityIndicator.startAnimating()
             
-          case .decryptionComplete(let tempURLs):
+          case .decryptionComplete(let tempURLs, let failures):
             self.activityIndicator.stopAnimating()
-            self.showDecryptedFile(tempURLs.first!)
+            if let first = tempURLs.first {
+              self.showDecryptedFile(first)
+            }
+            
+            if(!failures.isEmpty){
+              self.decryptWithSpecificPassword()
+            }
           case .encryptionComplete: ()
         }
       }
@@ -195,6 +203,8 @@ class DecryptDocumentViewController: UIViewController {
     case image
     case video
   }
+  
+  var specificPassword = false
   
   var fileDecrypted = false
   

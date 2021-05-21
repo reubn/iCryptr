@@ -11,18 +11,73 @@ import MobileCoreServices
 
 
 class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate, UIDocumentPickerDelegate {
+  var queuedFailures: [CryptionManager.CryptionFailure] = []
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     delegate = self
     allowsDocumentCreation = false
-    allowsPickingMultipleItems = true
+    allowsPickingMultipleItems = false
     shouldShowFileExtensions = true
     
     // Update the style of the UIDocumentBrowserViewController
     browserUserInterfaceStyle = .white
     view.tintColor = UIColor.init(red: 14.0/255, green: 122.0/255, blue: 254.0/255, alpha: 1.0)
     
-    let settingsBarButton = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(self.presentSettings))
+    let encryptDefaultAction = UIDocumentBrowserAction(identifier: "encryptDefault", localizedTitle: "Encrypt with Default Password", availability: [.menu, .navigationBar], handler: {urls in
+      let documents = urls.map({Document(fileURL: $0)})
+      
+      self.crypt(towards: .encrypted, documents: documents, with: .default)
+    })
+    encryptDefaultAction.supportsMultipleItems = true
+    encryptDefaultAction.image = UIImage(systemName: "lock")
+    
+    let encryptSpecificAction = UIDocumentBrowserAction(identifier: "encryptSpecific", localizedTitle: "Encrypt with Specific Password", availability: [.menu, .navigationBar], handler: {urls in
+      let documents = urls.map({Document(fileURL: $0)})
+      
+      // Set up alert controler to get password and new filename
+      let alert = UIAlertController(title: "Enter Encryption Password", message: "", preferredStyle: .alert)
+      // encrypt file on save
+      let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
+        guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
+        self.crypt(towards: .encrypted, documents: documents, with: .specific(password))
+      }
+      // set up cancel action
+      let alertCancelAction = UIAlertAction(title: "Cancel", style: .default)
+      
+      // build alert from parts
+      alert.addTextField { passwordField in
+        passwordField.placeholder = "Password"
+        passwordField.clearButtonMode = .whileEditing
+        passwordField.isSecureTextEntry = true
+        passwordField.autocapitalizationType = .none
+        passwordField.autocorrectionType = .no
+      }
+      
+      alert.addAction(alertCancelAction)
+      alert.addAction(alertSaveAction)
+      alert.preferredAction = alertSaveAction
+      
+      // present alert
+      self.present(alert, animated: true)
+    })
+    encryptSpecificAction.supportsMultipleItems = true
+    encryptSpecificAction.image = UIImage(systemName: "rectangle.and.pencil.and.ellipsis")
+    
+    let decryptAction = UIDocumentBrowserAction(identifier: "decrypt", localizedTitle: "Decrypt", availability: [.menu, .navigationBar], handler: {urls in
+      let documents = urls.map({Document(fileURL: $0)})
+      
+      self.crypt(towards: .decrypted, documents: documents, with: .default)
+    })
+    decryptAction.supportsMultipleItems = true
+    decryptAction.image = UIImage(systemName: "lock.open")
+    decryptAction.supportedContentTypes = ["com.reuben.icryptr.encryptedfile"]
+
+    
+    customActions = [encryptSpecificAction, encryptDefaultAction, decryptAction]
+
+    let settingsBarButton = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(self.presentSettings))
+
     additionalTrailingNavigationBarButtonItems = [settingsBarButton]
   }
   
@@ -44,12 +99,22 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     print("dp dpda", urls)
     
     CryptionManager.shared.clearTemporaryDirectory()
+    
+    if(!queuedFailures.isEmpty){
+      self.processDecryptionFailures(failures: queuedFailures)
+      queuedFailures = []
+    }
   }
   
   func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
     print("dp dpwc")
     
     CryptionManager.shared.clearTemporaryDirectory()
+    
+    if(!queuedFailures.isEmpty){
+      self.processDecryptionFailures(failures: queuedFailures)
+      queuedFailures = []
+    }
   }
   
   func documentBrowser(_ controller: UIDocumentBrowserViewController, didPickDocumentURLs documentURLs: [URL]) {
@@ -69,21 +134,68 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
         return
       }
       
-      CryptionManager.shared.crypt(towards: currentCryptionState.to, documents: documents, with: .default){message in
-        DispatchQueue.main.async {
-          switch message {
-          case .encryptionComplete(let tempURLs), .decryptionComplete(let tempURLs):
+      crypt(towards: currentCryptionState.to, documents: documents, with: .default)
+    }
+  }
+  
+  func crypt(towards: CryptionManager.CryptionState, documents: [Document], with: CryptionManager.PasswordMethod){
+    CryptionManager.shared.crypt(towards: towards, documents: documents, with: with){message in
+      DispatchQueue.main.async {
+        switch message {
+        case .encryptionComplete(let tempURLs, _):
+          let documentSaveController = UIDocumentPickerViewController(forExporting: tempURLs, asCopy: true)
+          documentSaveController.delegate = self
+          documentSaveController.popoverPresentationController?.sourceView = self.view
+          
+          self.present(documentSaveController, animated: true, completion: nil)
+        case .decryptionComplete(let tempURLs, let failures):
+          if(!tempURLs.isEmpty) {
             let documentSaveController = UIDocumentPickerViewController(forExporting: tempURLs, asCopy: true)
             documentSaveController.delegate = self
             documentSaveController.popoverPresentationController?.sourceView = self.view
             
+            self.queuedFailures = failures
+            
             self.present(documentSaveController, animated: true, completion: nil)
-          default: ()
+          } else {
+            self.processDecryptionFailures(failures: failures)
           }
+        default: ()
         }
       }
     }
-    
+  }
+  
+  func processDecryptionFailures(failures: [CryptionManager.CryptionFailure]){
+    if(!failures.isEmpty) {
+      let documents = failures.map({$0.document})
+      
+      // Set up alert controler to get password and new filename
+      let alert = UIAlertController(title: "Some Items Could Not Be Decrypted, Enter Decryption Password", message: "", preferredStyle: .alert)
+      // encrypt file on save
+      let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
+        guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
+        self.crypt(towards: .decrypted, documents: documents, with: .specific(password))
+      }
+      // set up cancel action
+      let alertCancelAction = UIAlertAction(title: "Cancel", style: .default)
+      
+      // build alert from parts
+      alert.addTextField { passwordField in
+        passwordField.placeholder = "Password"
+        passwordField.clearButtonMode = .whileEditing
+        passwordField.isSecureTextEntry = true
+        passwordField.autocapitalizationType = .none
+        passwordField.autocorrectionType = .no
+      }
+      
+      alert.addAction(alertCancelAction)
+      alert.addAction(alertSaveAction)
+      alert.preferredAction = alertSaveAction
+      
+      // present alert
+      self.present(alert, animated: true)
+    }
   }
   
   func documentBrowser(_ controller: UIDocumentBrowserViewController, didImportDocumentAt sourceURL: URL, toDestinationURL destinationURL: URL) {

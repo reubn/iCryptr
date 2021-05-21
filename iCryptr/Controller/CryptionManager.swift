@@ -63,7 +63,7 @@ class CryptionManager {
           return tempFileURL
         })
       }).then({tempFileURLs in
-        notifier(.encryptionComplete(tempFileURLs))
+        notifier(.encryptionComplete(tempFileURLs, []))
       })
     }
   }
@@ -89,16 +89,21 @@ class CryptionManager {
     case .specific(let password):
       notifier(.authenticationSuccessful)
       
-      self.encrypt(documents: documents, password: password, notifier: notifier)
+      self.decrypt(documents: documents, password: password, notifier: notifier)
     }
   }
   
   func decrypt(documents: [Document], password: String, notifier: @escaping (Update) -> Void){
     DispatchQueue.global(qos: .userInitiated).async {
-      let decryptedResults = documents.map({document -> CryptionResult in
-        let (fileData, fileName) = decryptFile(document.fileURL, password)!
-        
-        return CryptionResult(fileName: fileName, fileData: fileData)
+      let decryptedResults = documents.map({document -> Any in
+        if let result = decryptFile(document.fileURL, password){
+          let (fileData, fileName) = result
+          
+          return CryptionResult(fileName: fileName, fileData: fileData)
+          
+        } else {
+          return CryptionFailure(document: document)
+        }
       })
       
       let tempDirectoryURL = self.tempDirectoryURL.appendingPathComponent(ProcessInfo().globallyUniqueString)
@@ -109,7 +114,11 @@ class CryptionManager {
         print("temp dir cr failed")
       }
       
-      let tempFileURLs = decryptedResults.map({result -> URL in
+      let successes = decryptedResults.compactMap {$0 as? CryptionResult}
+      let failures = decryptedResults.compactMap {$0 as? CryptionFailure}
+      
+      let tempFileURLs = successes.map({result -> URL in
+        
         let tempFileURL = tempDirectoryURL.appendingPathComponent(result.fileName)
         
         try! result.fileData.write(to: tempFileURL, options: [.atomic, .completeFileProtection])
@@ -117,7 +126,7 @@ class CryptionManager {
         return tempFileURL
       })
       
-      notifier(.decryptionComplete(tempFileURLs))
+      notifier(.decryptionComplete(tempFileURLs, failures))
     }
   }
   
@@ -158,6 +167,10 @@ class CryptionManager {
     let fileData: Data
   }
   
+  struct CryptionFailure {
+    let document: Document
+  }
+  
   enum PasswordMethod {
     case `default`
     case specific(String)
@@ -167,8 +180,8 @@ class CryptionManager {
     case authenticationSuccessful
     case authenticationFailed
     
-    case encryptionComplete([URL])
-    case decryptionComplete([URL])
+    case encryptionComplete([URL], [CryptionFailure])
+    case decryptionComplete([URL], [CryptionFailure])
   }
   
   enum CryptionState: Equatable {

@@ -67,7 +67,7 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
   // MARK IB Actions for encryption
   @IBAction func encryptWithSpecificPassword() {
     // Set up alert controler to get password and new filename
-    let alert = UIAlertController(title: "Enter Password", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: "Enter Encryption Password", message: "", preferredStyle: .alert)
     // encrypt file on save
     let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
       guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
@@ -103,7 +103,7 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
           case .authenticationSuccessful:
             self.activityIndicator.startAnimating()
             
-          case .encryptionComplete(let tempURLs):
+          case .encryptionComplete(let tempURLs, _):
             self.activityIndicator.stopAnimating()
             
             let documentSaveController = UIDocumentPickerViewController(forExporting: tempURLs, asCopy: true)
@@ -111,7 +111,7 @@ class EncryptDocumentViewController: UIViewController, UIDocumentPickerDelegate 
             documentSaveController.popoverPresentationController?.sourceView = self.view
             
             self.present(documentSaveController, animated: true, completion: nil)
-          case .decryptionComplete: ()
+        case .decryptionComplete: ()
         }
       }
     }
