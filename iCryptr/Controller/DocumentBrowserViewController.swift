@@ -11,7 +11,7 @@ import MobileCoreServices
 
 
 class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate, UIDocumentPickerDelegate {
-  var queuedFailures: [CryptionManager.CryptionFailure] = []
+  var queuedFailureInfo: ([URL], [CryptionManager.CryptionFailure])? = nil
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -100,9 +100,9 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     
     CryptionManager.shared.clearTemporaryDirectory()
     
-    if(!queuedFailures.isEmpty){
-      self.processDecryptionFailures(failures: queuedFailures)
-      queuedFailures = []
+    if let info = queuedFailureInfo {
+      self.processDecryptionFailures(successes: info.0, failures: info.1)
+      queuedFailureInfo = nil
     }
   }
   
@@ -111,9 +111,9 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     
     CryptionManager.shared.clearTemporaryDirectory()
     
-    if(!queuedFailures.isEmpty){
-      self.processDecryptionFailures(failures: queuedFailures)
-      queuedFailures = []
+    if let info = queuedFailureInfo {
+      self.processDecryptionFailures(successes: info.0, failures: info.1)
+      queuedFailureInfo = nil
     }
   }
   
@@ -154,11 +154,11 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
             documentSaveController.delegate = self
             documentSaveController.popoverPresentationController?.sourceView = self.view
             
-            self.queuedFailures = failures
+            self.queuedFailureInfo = (tempURLs, failures)
             
             self.present(documentSaveController, animated: true, completion: nil)
           } else {
-            self.processDecryptionFailures(failures: failures)
+            self.processDecryptionFailures(successes: tempURLs, failures: failures)
           }
         default: ()
         }
@@ -166,12 +166,28 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     }
   }
   
-  func processDecryptionFailures(failures: [CryptionManager.CryptionFailure]){
+  func processDecryptionFailures(successes: [URL], failures: [CryptionManager.CryptionFailure]){
     if(!failures.isEmpty) {
       let documents = failures.map({$0.document})
       
+      let successCount = successes.count
+      let failureCount = failures.count
+      
+      var message: String {
+        get {
+          if(successCount == 0) {
+            return ""
+          }
+          
+          let successItemsPlural = successCount == 1 ? "item" : "items"
+          let failureItemsPlural = failureCount == 1 ? "item" : "items"
+          
+          return "\(successCount) \(successItemsPlural) succeeded, but \(failureCount) \(failureItemsPlural) failed. \nEnter Decryption Password for \(failureCount) \(failureItemsPlural)"
+        }
+      }
+      
       // Set up alert controler to get password and new filename
-      let alert = UIAlertController(title: "Some Items Could Not Be Decrypted, Enter Decryption Password", message: "", preferredStyle: .alert)
+      let alert = UIAlertController(title: "Enter Decryption Password", message: message, preferredStyle: .alert)
       // encrypt file on save
       let alertSaveAction = UIAlertAction(title: "Submit", style: .default) { action in
         guard let passwordField = alert.textFields?[0], let password = passwordField.text else { return }
